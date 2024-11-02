@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Overflow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        header {
+            display: flex;
+            justify-content: center; 
+            background-color: #0077cc; 
+            color: white;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            width: 100%; 
+            border-bottom: 1px solid #ccc; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: 1000; 
+        }
+        .header-content {
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            max-width: 1200px; 
+            width: 100%; 
+        }
+        .container {
+            display: flex;
+            flex: 1; 
+            margin-top: 60px; 
+        }
+        .left-menu {
+            display: flex;
+            flex-direction: column; 
+            align-items: flex-start; 
+            margin: 20px; 
+        }
+        .menu-item {
+            background: none;
+            border: none;
+            color: #0077cc; 
+            cursor: pointer;
+            text-align: left;
+            margin-bottom: 30px; 
+            font-size: 1em;
+        }
+        .menu-item:hover {
+            text-decoration: underline; 
+        }
+        .title {
+            font-size: 1.5em;
+            margin-right: 20px; 
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+        }
+        .search-container {
+            margin: 0 10px; 
+        }
+        .search-bar {
+            width: 700px; 
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+        }
+        .button {
+            background-color: #f8f9fa;
+            color: #0077cc;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px; 
+        }
+        .button:hover {
+            background-color: #e2e6ea;
+        }
+        .thin-line {
+            width: 1px; 
+            background-color: lightgrey; 
+            height: calc(100vh - 60px); 
+            margin: 20px; 
+        }
+        .content {
+            flex: 1; 
+            padding: 20px; 
+            display: flex;
+            flex-direction: column; 
+        }
+        .quote {
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 30px; 
+            padding: 20px; 
+            background-color: #f5f5f5; 
+            border-radius: 4px; 
+            min-height: 200px; 
+        }
+        .quote img {
+            width: 400px; 
+            height: auto; 
+            margin-left: 20px; 
+        }
+        .quote-text {
+            font-size: 1.5em; 
+            margin: 0; 
+            color: #333; 
+            flex: 1; 
+        }
+        .question {
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            display: flex; 
+        }
+        .question img {
+            width: 100px; 
+            height: auto; 
+            margin-right: 15px; 
+        }
+        .question-title {
+            font-size: 1.2em; 
+            margin: 0; 
+        }
+        .question-description {
+            margin: 5px 0 0; 
+        }
+        footer {
+            background-color: black; 
+            color: white; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .footer-links {
+            margin: 10px 0; 
+        }
+        .footer-links a {
+            color: white; 
+            text-decoration: none; 
+            margin: 0 15px; 
+        }
+        .social-icons {
+            display: flex; 
+            margin-top: 10px;
+
+        }
+        .social-icons a {
+            margin: 0 10px; 
+            color: white;
+        }
+        
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="title">Data Overflow</div>
+        <div class="controls">
+            <button class="button">About</button>
+            <div class="search-container">
+                <input type="text" class="search-bar" placeholder="Search...">
+            </div>
+            <button class="button">Login</button>
+            <button class="button">Sign Up</button>
+        </div>
+    </div>
+</header>
+
+
+<div class="container">
+    <div class="left-menu">
+        <button class="menu-item">🏠 Home</button>
+        <button class="menu-item">❓ Questions</button>
+        <button class="menu-item">🏷️ Tags</button>
+    </div>
+    <div class="thin-line"></div> 
+    <div class="content">
+        <!-- Quote Section -->
+        <div class="quote">
+            <p class="quote-text">"Have a question about data science? We're here to help you navigate the sea of information! Dive deep into the world of data and discover the answers you seek. No question is too big, and every answer brings you closer to clarity."</p>
+            <img src="https://cdn.sstatic.net/Img/home/illo-home-hero.png?v=4718e8f857c5" alt="Data Science Image">
+        </div>
+        
+        <div class="question">
+            <img src="https://via.placeholder.com/100" alt="Question Image">
+            <div>
+                <h3 class="question-title">What are the best practices for handling large datasets?</h3>
+                <p class="question-description">Looking for strategies to efficiently manage large datasets in web applications.</p>
+            </div>
+        </div>
+        <div class="question">
+            <img src="https://via.placeholder.com/100" alt="Question Image">
+            <div>
+                <h3 class="question-title">How can I improve performance in data-heavy applications?</h3>
+                <p class="question-description">Any tips on improving performance for applications dealing with a lot of data?</p>
+            </div>
+        </div>
+        <div class="question">
+            <img src="https://via.placeholder.com/100" alt="Question Image">
+            <div>
+                <h3 class="question-title">What tools can help visualize large datasets?</h3>
+                <p class="question-description">Seeking recommendations for tools to visualize complex data effectively.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-links">
+        
+        <button class="menu-item" style="color: white; margin-bottom: 5px;"> Questions</button>
+        
+    </div>
+    <div class="social-icons">
+        <a href="https://www.facebook.com" target="_blank">
+            Facebook
+        </a>
+        <a href="https://twitter.com" target="_blank">
+            Twitter
+        </a>
+        <a href="https://www.instagram.com" target="_blank">
+            Instagram
+        </a>
+    </div>
+</footer>
+
+</body>
+</html>
