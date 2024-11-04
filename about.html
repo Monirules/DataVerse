@@ -12,14 +12,33 @@
             background-color: #f9f9f9;
         }
         header {
-            background-color: #0077cc;
+            display: flex;
+            justify-content: center; 
+            background-color: #034d82; 
             color: white;
-            padding: 10px 20px;
-            text-align: center;
+            box-sizing: border-box;
+            width: 100%; 
+            border-bottom: 1px solid #ccc; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: 1000; 
+        }
+        .header-content {
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            max-width: 1200px; 
+            width: 100%; 
+        }
+        .header-content h1 {
+            font-size: 1.5em; /* Adjust the font size */
+            margin: 5px; /* Remove margin */
+            padding: 9px; /* Remove padding */
         }
         .content {
             padding: 20px;
-            max-width: 800px;
+            max-width: 60%;
             margin: 0 auto;
             text-align: center;
         }
@@ -39,6 +58,7 @@
             font-size: 1.2em;
             color: #333;
             line-height: 1.6;
+            text-align: justify;
         }
         .back-button {
             background-color: #0077cc;
@@ -48,6 +68,8 @@
             border-radius: 5px;
             cursor: pointer;
             margin-top: 20px;
+            margin-top: 20px;
+            font-size: 16px;
         }
         .back-button:hover {
             background-color: #005fa3;
@@ -57,11 +79,11 @@
 <body>
 
 <header>
-    <h1>About Data Overflow</h1>
+    <h1>About DataVerse</h1>
 </header>
-
-<div class="content">
-    <div class="catchy-line">"Navigating the Data Universe, One Question at a Time!"</div>
+<br><br><br>
+<div class="content"><br><br>
+    <div class="catchy-line">"Navigating the Data Universe, One Question at a Time!"</div><br>
     <img src="https://api.careers.fresenius.com/images/4a9e0fed-f1d2-49ce-92d1-8af5ba2df041" alt="Data Science" class="about-image">
     <p class="about-text">
         Welcome to Data Overflow! We are your go-to resource for all things data science. 
@@ -70,8 +92,8 @@
         Dive into discussions, share your knowledge, and help us create a space where 
         everyone can learn and grow in the exciting world of data!
     </p>
-    <button class="back-button" onclick="window.history.back();">Back</button>
+    <button class="back-button" onclick="window.history.back();">⬅️ Back to Home</button>
 </div>
-
+<br><br>
 </body>
 </html>
