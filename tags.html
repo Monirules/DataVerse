@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Overflow - Tags</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        header {
+            display: flex;
+            justify-content: center; 
+            background-color: #0077cc; 
+            color: white;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            width: 100%; 
+            border-bottom: 1px solid #ccc; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: 1000; 
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            max-width: 1200px; 
+            width: 100%; 
+        }
+
+        /* Use CSS Grid for two rows of 4 items each */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 columns */
+            gap: 30px; /* space between cards */
+            margin-top: 60px; 
+            padding: 20px;
+            justify-items: center; /* centers the cards horizontally */
+        }
+
+        .tag-card {
+            width: 200px;
+            height: 200px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0077cc;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tag-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Home link at the bottom of the page */
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1.2em;
+            color: #0077cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .home-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="title">Data Overflow - Tags</div>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Tag Cards Section (4 in the first row, 4 in the second row) -->
+    <div class="tag-card">Machine Learning</div>
+    <div class="tag-card">Deep Learning</div>
+    <div class="tag-card">Big Data</div>
+    <div class="tag-card">Data Visualization</div>
+    <div class="tag-card">Statistics</div>
+    <div class="tag-card">Data Mining</div>
+    <div class="tag-card">Natural Language Processing</div>
+    <div class="tag-card">AI Ethics</div>
+</div>
+
+<!-- Home link at the bottom of the page -->
+<a href="index.html" class="home-link">Back to Home</a>
+
+</body>
+</html>
