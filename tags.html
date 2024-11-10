@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Overflow - Tags</title>
+    <title>DataVerse - Tags</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -66,6 +66,7 @@
 
         .tag-card:hover {
             transform: translateY(-10px);
+            color:rgb(36, 206, 33);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
@@ -73,6 +74,10 @@
             font-size: 2em; /* Icon size */
             color: #0077cc; /* Icon color */
             margin-bottom: 10px; /* Space between icon and text */
+        }
+
+        .tag-card:hover i {
+            color: rgb(35, 196, 32); /* Change icon color on hover */
         }
 
         .home-link {
@@ -139,7 +144,7 @@
     <div class="left-menu">
         <button class="menu-item" onclick="window.location.href='index.html'">🏠 Home</button>
         <button class="menu-item" onclick="window.location.href='profile.html'">🙋‍♂️ Profile</button>
-        <button class="menu-item">🔍 Question</button>
+        <button class="menu-item" onclick="window.location.href='question.html'">🔍 Question</button>
         <button class="menu-item" onclick="window.location.href='tags.html'">🏷️ Tags</button>
         <button class="menu-item" onclick="window.location.href='about.html'">🌐 About</button>
     </div>
