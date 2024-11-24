@@ -170,6 +170,22 @@
             z-index: 9999;
         }
 
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.875rem;
+            margin-right: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -283,6 +299,54 @@
     </div>
 
 
+
+    <!-- Edit Question Modal -->
+<div class="modal" id="editQuestionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Question</h5>
+                <button type="button" class="close" onclick="closeEditQuestionModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="editSuccessAlert" class="alert alert-success" role="alert">
+                    Question updated successfully!
+                </div>
+                <div id="editErrorAlert" class="alert alert-danger" role="alert">
+                    Failed to update the question. Please try again.
+                </div>
+
+                <form id="editQuestionForm">
+                    <input type="hidden" id="editQuestionId">
+                    <div class="form-group">
+                        <label for="editQuestionTitle">Question Title</label>
+                        <input type="text" class="form-control" id="editQuestionTitle" placeholder="Edit question title">
+                    </div>
+                    <div class="form-group">
+                        <label for="editQuestionDescription">Question Description</label>
+                        <textarea class="form-control" id="editQuestionDescription" rows="4" placeholder="Edit question description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editQuestionTags">Tags</label>
+                        <select class="form-control" id="editQuestionTags" multiple>
+                            <option value="machine-learning">Machine Learning</option>
+                            <option value="deep-learning">Deep Learning</option>
+                            <option value="big-data">Big Data</option>
+                            <option value="data-science">Data Visualization</option>
+                            <option value="python">Statistics</option>
+                            <option value="data-mining">Data Mining</option>
+                            <option value="ai-ethics">AI Ethics</option>
+                            <option value="nlp">NLP</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="submitEditQuestion()">Update Question</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
     
 
 
@@ -307,6 +371,9 @@
             $('#postQuestionModal').modal('hide');
         }
 
+        function closeEditQuestionModal() {
+            $('#editQuestionModal').modal('hide');
+        }
 
 
         
@@ -377,7 +444,7 @@ function submitQuestion() {
         });
 }
 
-// Function to load user questions
+
 function loadUserQuestions(email) {
     fetch(`/questions`)
         .then(response => response.json())
@@ -397,8 +464,12 @@ function loadUserQuestions(email) {
                     questionItem.innerHTML = `
                         <h5>${question.Title}</h5>
                         <p>${question.Body}</p>
-                        <strong>Tags:</strong> ${question.Tags.join(", ")} --
-                        <strong>Posted on:</strong> ${new Date(question.CreationDate).toLocaleString()}
+                        <p><strong>Tags:</strong> ${question.Tags.join(", ")}</p>
+                        <p><small>Posted on: ${new Date(question.CreationDate).toLocaleString()}</small></p>
+                        <div>
+                            <button class="btn btn-success btn-sm" onclick="editQuestion('${question._id}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteQuestion('${question._id}')">Delete</button>
+                        </div>
                         <hr>
                     `;
                     recentQuestionsDiv.appendChild(questionItem);
@@ -411,6 +482,94 @@ function loadUserQuestions(email) {
             console.error("Error loading questions:", err);
         });
 }
+
+
+function editQuestion(questionId) {
+    // Fetch question details and open the edit modal
+    fetch(`/questions/${questionId}`)
+        .then(response => response.json())
+        .then(question => {
+            console.log(question); // Log the response to inspect the structure
+
+            if (question && question.Tags) {  // Use 'Tags' with the correct case
+                document.getElementById("editQuestionId").value = question._id;
+                document.getElementById("editQuestionTitle").value = question.Title;
+                document.getElementById("editQuestionDescription").value = question.Body;
+
+                const tagsElement = document.getElementById("editQuestionTags");
+                Array.from(tagsElement.options).forEach(option => {
+                    option.selected = question.Tags.includes(option.value);
+                });
+
+                $('#editQuestionModal').modal('show');
+            } else {
+                console.error('Tags not found for the question:', question);
+            }
+        })
+        .catch(err => console.error("Error fetching question details:", err));
+}
+
+
+    
+    function submitEditQuestion() {
+        const questionId = document.getElementById("editQuestionId").value;
+        const title = document.getElementById("editQuestionTitle").value.trim();
+        const description = document.getElementById("editQuestionDescription").value.trim();
+        const tagsElement = document.getElementById("editQuestionTags");
+        const tags = Array.from(tagsElement.selectedOptions).map(option => option.value);
+
+        const updatedData = { title, description, tags };
+
+        fetch(`questions/${questionId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#editQuestionModal').modal('hide');
+                    loadUserQuestions();
+                } else {
+                    alert("Success to update the question!");
+                    location.reload();
+                }
+            })
+            .catch(err => console.error("Error updating question:", err));
+    }
+
+
+
+    function deleteQuestion(questionId) {
+    console.log('Deleting question with ID:', questionId);  // Log the ID being passed
+    if (confirm("Are you sure you want to delete this question?")) {
+        fetch(`/questions/${questionId}`, { method: 'DELETE' })
+            .then(response => {
+                console.log('Response:', response);  // Log the response object
+                if (!response.ok) {
+                    throw new Error(`Fail to delete: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    loadUserQuestions();
+                } else {
+                    alert("Sucess to delete the question.");
+                    location.reload();
+                }
+            })
+            .catch(err => {
+                console.error("Error deleting question:", err);
+                alert("Error deleting question.");
+            });
+    }
+}
+
+
+
+
+
 
 // Load user questions when the page loads
 document.addEventListener("DOMContentLoaded", () => {

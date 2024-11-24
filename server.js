@@ -1,6 +1,6 @@
 // Import required modules
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient,ObjectId } = require('mongodb');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -153,41 +153,6 @@ app.post('/logout', (req, res) => {
 
 
 
-// POST endpoint to submit a question
-// POST endpoint to submit a question
-// app.post('/api/questions', async (req, res) => {
-//     try {
-//         // Extract data from the request body
-//         const { title, description, tags, userId, creationDate } = req.body;
-
-//         // Validation: Ensure all required fields are provided
-//         if (!title || !description || !userId || !creationDate) {
-//             return res.status(400).json({ success: false, message: 'Title, description, userId, and creationDate are required' });
-//         }
-
-//         // Reference to the Questions collection
-//         const questionsCollection = db.collection('Questions');
-
-//         // Prepare the question document
-//         const newQuestion = {
-//             Title: title,
-//             Body: description, // Assuming 'description' corresponds to 'Body'
-//             tags: tags || [], // Default to empty array if no tags are provided
-//             userId: userId,
-//             CreationDate: new Date(creationDate), // Convert creationDate string to Date object
-//         };
-
-//         // Insert the new question into the collection
-//         const result = await questionsCollection.insertOne(newQuestion);
-
-//         // Respond with a success message
-//         res.json({ success: true, message: 'Question posted successfully!' });
-//     } catch (err) {
-//         console.error('Error posting question:', err);
-//         res.status(500).json({ success: false, message: 'Failed to post question' });
-//     }
-// });
-
 
 // POST endpoint to submit a question
 app.post('/api/questions', async (req, res) => {
@@ -249,6 +214,70 @@ app.get('/questions', async (req, res) => {
 
 
 
+
+app.get('/questions/:id', async (req, res) => {
+    try {
+        const questionId = req.params.id;
+        const question = await db.collection('Questions').findOne({ _id: new ObjectId(questionId) });
+        if (!question) return res.status(404).json({ message: 'Question not found' });
+        res.json(question);
+    } catch (err) {
+        console.error('Error fetching question:', err);
+        res.status(500).json({ message: 'Error fetching question' });
+    }
+});
+
+
+
+// DELETE endpoint to remove a question by ID
+app.delete('/questions/:id', async (req, res) => {
+    try {
+        const questionId = req.params.id;
+        const result = await db.collection('Questions').deleteOne({ _id: new ObjectId(questionId) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        res.json({ message: 'Question deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting question:', err);
+        res.status(500).json({ message: 'Error deleting question' });
+    }
+});
+
+// PUT endpoint to update a question
+app.put('/questions/:id', async (req, res) => {
+    try {
+        const questionId = req.params.id;
+        const { title, description, tags, creationDate } = req.body;
+
+        // Validation: Ensure that at least title or description is provided
+        if (!title && !description) {
+            return res.status(400).json({ message: 'Title or description is required to update' });
+        }
+
+        const updatedData = {};
+        if (title) updatedData.Title = title;
+        if (description) updatedData.Body = description;
+        if (tags) updatedData.Tags = tags;
+        if (creationDate) updatedData.CreationDate = new Date(creationDate);
+
+        const result = await db.collection('Questions').updateOne(
+            { _id: new ObjectId(questionId) },
+            { $set: updatedData }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        res.json({ message: 'Question updated successfully' });
+    } catch (err) {
+        console.error('Error updating question:', err);
+        res.status(500).json({ message: 'Error updating question' });
+    }
+});
 
 
 
