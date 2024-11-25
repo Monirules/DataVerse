@@ -349,7 +349,9 @@
                 `;
                 } else {
                     // Redirect to login if the user is not logged in
-                    window.location.href = 'login.html';
+                    alert("Please log in to see profile.");
+                    window.location.href = 'index.html';
+                    // window.location.href = 'login.html';
                     userControls.innerHTML = `
                     <button class="button" onclick="window.location.href='login.html'">Login</button>
                     <button class="button" onclick="window.location.href='register.html'">Sign Up</button>

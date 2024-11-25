@@ -153,39 +153,38 @@
 
 
 <div class="container">
-    <div class="tag-card">
-        <i class="fas fa-robot"></i>
-        Machine Learning
+    <div class="tag-card" onclick="redirectToTagPage('machine-learning')">
+        <i class="fas fa-robot"></i> Machine Learning
     </div>
-    <div class="tag-card">
-        <i class="fas fa-brain"></i>
-        Deep Learning
+    <div class="tag-card" onclick="redirectToTagPage('deep-learning')">
+        <i class="fas fa-brain"></i> Deep Learning
     </div>
-    <div class="tag-card">
-        <i class="fas fa-database"></i>
-        Big Data
+    <div class="tag-card" onclick="redirectToTagPage('big-data')">
+        <i class="fas fa-database"></i> Big Data
     </div>
-    <div class="tag-card">
-        <i class="fas fa-chart-bar"></i>
-        Data Visualization
+    <div class="tag-card" onclick="redirectToTagPage('data-visualization')">
+        <i class="fas fa-chart-bar"></i> Data Visualization
     </div>
-    <div class="tag-card">
-        <i class="fas fa-chart-line"></i>
-        Statistics
+    <div class="tag-card" onclick="redirectToTagPage('statistics')">
+        <i class="fas fa-chart-line"></i> Statistics
     </div>
-    <div class="tag-card">
-        <i class="fa-solid fa-hammer"></i>
-        Data Mining
+    <div class="tag-card" onclick="redirectToTagPage('data-mining')">
+        <i class="fa-solid fa-hammer"></i> Data Mining
     </div>
-    <div class="tag-card">
-        <i class="fas fa-language"></i>
-        NLP
+    <div class="tag-card" onclick="redirectToTagPage('nlp')">
+        <i class="fas fa-language"></i> NLP
     </div>
-    <div class="tag-card">
-        <i class="fas fa-balance-scale"></i>
-        AI Ethics
+    <div class="tag-card" onclick="redirectToTagPage('artificial-intelligence')">
+        <i class="fas fa-balance-scale"></i> AI Ethics
     </div>
 </div>
+
+<script>
+    // Function to redirect to the question page based on the clicked tag
+    function redirectToTagPage(tag) {
+        window.location.href = `/tags?tag=${tag}`; // Redirect to the page that lists questions with the selected tag
+    }
+</script>
 
 </body>
 </html>

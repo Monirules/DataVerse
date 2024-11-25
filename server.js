@@ -282,6 +282,292 @@ app.put('/questions/:id', async (req, res) => {
 
 
 
+// Search route
+app.get('/search', async (req, res) => {
+    const query = req.query.q;
+
+    if (!query || query.trim().length === 0) {
+        return res.status(400).json({ error: 'Query parameter is required' });
+    }
+
+    try {
+        // Search in the "Questions" collection
+        const regex = new RegExp(query, 'i'); // Case-insensitive search
+        const results = await db.collection('Questions').find({ Title: regex }).limit(10).toArray();
+
+        res.json(results);
+    } catch (err) {
+        console.error('Error fetching search results:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+
+
+app.get('/question/:id', async (req, res) => {
+    const questionId = req.params.id;
+
+    try {
+        // Fetch question details
+        const question = await db.collection('Questions').findOne({ _id: new ObjectId(questionId) });
+
+        if (!question) {
+            return res.status(404).send('<h1>Question not found</h1>');
+        }
+
+        // Fetch answers related to the question
+        const answers = await db.collection('Answers').find({ Id: questionId }).toArray();
+
+        // Pass user email if logged in
+        const userEmail = req.session.user ? req.session.user.email : null;
+
+        // Render HTML
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>${question.Title}</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                        padding: 0;
+                        text-align: center;
+                    }
+                    .container {
+                        max-width: 800px;
+                        margin: 0 auto;
+                        text-align: justify;
+                    }
+                    .question-details, .answers, .answer-form {
+                        border: 1px solid #ddd;
+                        padding: 20px;
+                        border-radius: 5px;
+                        background-color: #f9f9f9;
+                        margin-bottom: 20px;
+                    }
+                    h1 {
+                        font-size: 24px;
+                        margin-bottom: 10px;
+                        text-align: center;
+                    }
+                    p, small {
+                        font-size: 16px;
+                        color: #555;
+                    }
+                    button {
+                        margin-top: 10px;
+                        padding: 10px 15px;
+                        background-color: #008CBA;
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                    button:hover {
+                        background-color: #0056b3;
+                        transition-duration: 0.4s;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="question-details">
+                        <h1>${question.Title}</h1>
+                        <p>${question.Body}</p>
+                        <p><strong>Tags:</strong> ${question.Tags && question.Tags.length ? question.Tags.join(', ') : 'None'}</p>
+                        <small>Created on: ${new Date(question.CreationDate).toLocaleDateString()}</small>
+                    </div>
+
+                    <div class="answer-form">
+                        <h2>Submit an Answer</h2>
+                        <form id="answer-form">
+                            <textarea id="answer-body" rows="5" cols="50" placeholder="Submit your answer.." required></textarea><br>
+                            <button type="button" onclick="submitAnswer()">Submit Answer</button>
+                        </form>
+                    </div>
+
+                    <div class="answers">
+                        <h2>Answers</h2>
+                        ${answers.map(answer => `
+                            <div>
+                                <span style:"font-weight: bold; margin-top:10px;">${answer.Email}</span> on <small>${new Date(answer.CreationDate).toLocaleDateString()}</small>
+                                <p> ${answer.Body}</p>
+                                <hr>
+                            
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <script>
+                    const userEmail = ${userEmail ? `"${userEmail}"` : null}; // Pass user email to JavaScript
+
+                    function submitAnswer() {
+                        const body = document.getElementById('answer-body').value.trim();
+
+                        if (!body) {
+                            alert('Answer cannot be empty.');
+                            return;
+                        }
+
+                        if (!userEmail) {
+                            alert('You must be logged in to submit an answer.');
+                            return;
+                        }
+
+                        fetch('/answer', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                Id: '${questionId}', 
+                                Body: body,
+                                Email: userEmail
+                            })
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                location.reload(); 
+                            } else {
+                                alert('Success to submit answer!');
+                                location.reload();
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error submitting answer:', err);
+                            alert('An error occurred. Please try again.');
+                        });
+                    }
+                </script>
+            </body>
+            </html>
+        `);
+    } catch (err) {
+        console.error('Error fetching question details:', err);
+        res.status(500).send('<h1>Internal Server Error</h1>');
+    }
+});
+
+
+// Handle answer submission
+app.post('/answer', async (req, res) => {
+    const { Id, Body, Email } = req.body;
+
+    if (!Id || !Body || !Email) {
+        return res.status(400).send('Missing required fields.');
+    }
+
+    try {
+        await db.collection('Answers').insertOne({
+            Id,
+            Body,
+            Email,
+            CreationDate: new Date(),
+        });
+        alert('Answer submitted successfully.');
+        res.status(200).send('Answer submitted successfully.');
+    } catch (err) {
+        console.error('Error saving answer:', err);
+        res.status(500).send('Failed to submit answer.');
+    }
+});
+
+
+// Route to get questions by tag
+app.get('/tags', async (req, res) => {
+    const { tag } = req.query;
+
+    if (!tag) {
+        return res.status(400).send('Tag is required');
+    }
+
+    try {
+        // Fetch questions with the selected tag
+        const questions = await db.collection('Questions').find({ Tags: tag }).toArray();
+
+        // Fetch answers for each question
+        const questionsWithAnswers = await Promise.all(questions.map(async (question) => {
+            const answers = await db.collection('Answers').find({ Id: question._id.toString() }).toArray();
+            return { ...question, answers };
+        }));
+
+        // Render HTML with questions and answers
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title style="collor: blue;">${tag} Questions</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                        text-align: center;
+                    }
+                    .question-card {
+                        border: 1px solid #ddd;
+                        padding: 20px;
+                        border-radius: 5px;
+                        background-color: #f9f9f9;
+                        margin-bottom: 20px;
+                        text-align: justify;
+                    }
+                    h1 {
+                        font-size: 24px;
+                        margin-bottom: 20px;
+                    }
+                    button {
+                        padding: 10px 15px;
+                        background-color: #007bff;
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                    button:hover {
+                        background-color: #0056b3;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>${tag} Questions</h1>
+                ${questionsWithAnswers.length === 0 ? 
+                    '<p>No questions found for this tag.</p>' : 
+                    questionsWithAnswers.map(question => `
+                        <div class="question-card">
+                            <h2>${question.Title}</h2>
+                            <p>${question.Body}</p>
+                            <small>Created on: ${new Date(question.CreationDate).toLocaleDateString()}</small>
+                            <h3>Answers:</h3>
+                            ${question.answers.length > 0 ? 
+                                question.answers.map(answer => `
+                                    <div>
+                                        <p>${answer.Body}</p>
+                                        <small>By: ${answer.Email} on ${new Date(answer.CreationDate).toLocaleDateString()}</small>
+                                    </div>
+                                `).join('') : 
+                                '<p>No answers yet.</p>'
+                            }
+                        </div>
+                    `).join('')
+                }
+                <br>
+                <button onclick="window.history.back()">Back</button>
+            </body>
+            </html>
+        `);
+    } catch (err) {
+        console.error('Error fetching questions and answers:', err);
+        res.status(500).send('<h1>Internal Server Error</h1>');
+    }
+});
+
+
+
 // Start the server
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

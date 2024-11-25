@@ -12,6 +12,7 @@
             background-color: #ffffff;
             padding: 20px;
             display: flex;
+            
         }
 
         header {
@@ -185,7 +186,50 @@
             font-size: 0.875rem;
             margin-right: 5px;
         }
+        
+                    
 
+
+      .question {
+        border: 1px solid #ddd;       /* Thin border around each question */
+        padding: 20px;                 /* Space inside the box */
+        margin: 15px auto;             /* Center the question box and add margin */
+        max-width: 800px;              /* Set a max width for each question box */
+        background-color: #f9f9f9;    /* Light background color */
+        border-radius: 5px;           /* Rounded corners */
+        text-align: justify;           /* Justify text alignment */
+    }
+
+    .question h3 {
+        font-size: 22px;               /* Larger font for the title */
+        margin-bottom: 10px;           /* Space between title and body */
+        color: #333;                   /* Dark color for the title */
+    }
+
+    .question p {
+        font-size: 16px;               /* Body text size */
+        color: #555;                   /* Slightly lighter text color */
+    }
+
+    .question small {
+        font-size: 14px;               /* Smaller text for the creation date */
+        color: #888;                   /* Light gray color for the date */
+    }
+
+    .question button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #008CBA;
+         color: white;
+         border: none;
+      border-radius: 5px;
+      cursor: pointer;             /* Space above the button */
+    }
+
+    .question button:hover {
+        background-color: #0056b3;
+        transition-duration: 0.4s;   /* Darker blue when the button is hovered */
+    }
     </style>
 </head>
 <body>
@@ -213,9 +257,13 @@
 
         <!-- Search Bar -->
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search questions...">
-            <button id="searchButton">Search</button>
+            <input type="text" id="search" placeholder="Search questions...">
+            
         </div>
+        <div id="results" style="text-align: center;">
+            <!-- Search results will appear here -->
+        </div>
+
 
         <!-- Action Buttons -->
         <div class="action-buttons">
@@ -280,13 +328,13 @@
                             <label for="questionTags">Tags</label>
                             <select class="form-control" id="questionTags" multiple>
                                 <option value="machine-learning">Machine Learning</option>
-                                <option value="machine-learning">Deep Learning</option>
-                                <option value="machine-learning">Big Data</option>
-                                <option value="data-science">Data Visualization</option>
-                                <option value="python">Statistics</option>
-                                <option value="deep-learning">Data Mining</option>
-                                <option value="web-development">AI Ethics</option>
-                                <option value="database">NLP</option>
+                                <option value="deep-learning">Deep Learning</option>
+                                <option value="big-data">Big Data</option>
+                                <option value="data-visualization">Data Visualization</option>
+                                <option value="statistics">Statistics</option>
+                                <option value="data-mining">Data Mining</option>
+                                <option value="artificial-intelligence">AI Ethics</option>
+                                <option value="nlp">NLP</option>
                                 
                             </select>
                             <small class="form-text text-muted">Select relevant tags for your question.</small>
@@ -441,6 +489,7 @@ function submitQuestion() {
         .catch(err => {
             console.error("Session check error:", err);
             alert("Please log in to post a question.");
+            window.location.href = 'index.html';
         });
 }
 
@@ -570,7 +619,6 @@ function editQuestion(questionId) {
 
 
 
-
 // Load user questions when the page loads
 document.addEventListener("DOMContentLoaded", () => {
     fetch('/session')
@@ -584,6 +632,62 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search');
+            const resultsDiv = document.getElementById('results');
+
+            // Add event listener for input
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.trim();
+
+                if (query.length === 0) {
+                    resultsDiv.innerHTML = '<p>Start typing to search for questions...</p>';
+                    return;
+                }
+
+                // AJAX request to fetch search results
+                fetch(`/search?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsDiv.innerHTML = ''; // Clear previous results
+
+                        if (data.length === 0) {
+                            resultsDiv.innerHTML = '<p>No questions found.</p>';
+                        } else {
+                            data.forEach(question => {
+                                const questionDiv = document.createElement('div');
+                                questionDiv.classList.add('question');
+                                // Limit Body to 50 words
+                                const bodyPreview = question.Body.split(' ').slice(0, 50).join(' ') + '...';
+                                questionDiv.innerHTML = `
+                                    <h3>${question.Title}</h3>
+                                    <p>${bodyPreview}</p>
+                                    <small>Created on: ${new Date(question.CreationDate).toLocaleDateString()}</small>
+                                    <br>
+                                    <button onclick="viewQuestion('${question._id}')">View</button>
+                                `;
+                                
+                                resultsDiv.appendChild(questionDiv);
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error fetching search results:', err);
+                        resultsDiv.innerHTML = '<p>Error fetching search results.</p>';
+                    });
+            });
+
+            // Show default message
+            resultsDiv.innerHTML = '<p>Start typing to search for questions...</p>';
+        });
+
+
+
+
+// Function to redirect to the full question page
+function viewQuestion(id) {
+    window.location.href = `/question/${id}`;
+}
 
 
     </script>
