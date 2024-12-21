@@ -1,21 +1,24 @@
-DataVerse is a question-and-answer site dedicated to Data Science, covering topics like Machine Learning, Deep Learning, NLP, and Data Analytics. Ask, answer, and connect with data professionals.
+# DataVerse - Data Science Q&A Platform
 
-**Features:**
-1. User Authentication - Register and Login. Session is used.
-2. User Profile
-3. Question Post, Update & Delete.
-4. Live Search of Questions Using Ajax.
-5. Search and Answer the questions.
-6. Image Caching in About Page
-7. Image Slider in starting page.
-8. Questions search with specific Tags.
+DataVerse is a question-and-answer platform dedicated to Data Science, covering Machine Learning, Deep Learning, NLP, and Data Analytics. Users can ask, answer, and connect with professionals in the field.
 
-**Technology:**
-1. FrontEnd - HTML, CSS, Bootstrap
-2. Backend - JavaScript, Node.js, Ajax
-3. Database - MongoDB
+## Features:
+- **User Authentication**: Register and log in with sessions.
+- **Profile Management**: Customize and manage your user profile.
+- **Question Posting**: Post, update, and delete questions.
+- **Live Search**: Use Ajax for live search of questions.
+- **Tag-based Search**: Filter questions by tags.
+- **Image Slider**: Display a dynamic image slider on the homepage.
+  
+## Tech Stack:
+- **Frontend**: HTML, CSS, Bootstrap
+- **Backend**: JavaScript, Node.js, Ajax
+- **Database**: MongoDB
 
-**Database Collection:**
-1. Questions
-2. Answers
-3. Users
+## Database Collections:
+- Questions
+- Answers
+- Users
+
+## License:
+This project is licensed under the [MIT License](LICENSE).
