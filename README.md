@@ -1,5 +1,7 @@
 # DataVerse - Data Science Q&A Platform
 
+![image](https://github.com/user-attachments/assets/71f8d330-411b-4a1b-b8b0-2e257060b66b)
+
 DataVerse is a question-and-answer platform dedicated to Data Science, covering Machine Learning, Deep Learning, NLP, and Data Analytics. Users can ask, answer, and connect with professionals in the field.
 
 ## Features:
